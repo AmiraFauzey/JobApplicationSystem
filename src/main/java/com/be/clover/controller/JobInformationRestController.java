@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,8 +49,8 @@ public class JobInformationRestController {
 	}
 
 	// update job
-	@PostMapping(value = BeUrlConstant.JOB)
-	public ResponseEntity<BeJobInformation> updateJob(@RequestBody BeJobInformation jobInformation){
+	@PostMapping(value = BeUrlConstant.JOB + "/{jobId}")
+	public ResponseEntity<BeJobInformation> updateJob(@PathVariable Integer jobId, @RequestBody BeJobInformation jobInformation){
 
 		BeJobInformation jobInfo = jobInformationService.updateJob(jobInformation);
 
@@ -57,8 +58,8 @@ public class JobInformationRestController {
 	}
 
 	// Delete job
-	@DeleteMapping(value = BeUrlConstant.JOB)
-	public ResponseEntity<Integer> deleteJob(@RequestParam(value = "jobId", required = true) Integer jobId) {
+	@DeleteMapping(value = BeUrlConstant.JOB + "/{jobId}")
+	public ResponseEntity<Integer> deleteJob(@PathVariable Integer jobId) {
 		Integer deleteJob = jobInformationService.deleteJob(jobId);
 		return new ResponseEntity<>(deleteJob, HttpStatus.OK);
 	}
@@ -76,19 +77,16 @@ public class JobInformationRestController {
 	// Get data by jobId
 	@GetMapping(value = BeUrlConstant.JOB + "/{jobId}")
 	public ResponseEntity<BeJobInformation> getJobById(@PathVariable Integer jobId) {
-		if(jobId.equals(null)) {
-			throw new ResourceNotFoundException("Not found job with id = " + jobId);
-		}
 		BeJobInformation result = jobInformationService.findByJobId(jobId);
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 	
-	//Get filter data result
-	@GetMapping
-    public ResponseEntity<Page<BeJobInformation>> getJobs(JobInformationPage jobInformationPage,
-    		JobInformationSearchCriteria jobInformationSearchCriteria){
-        return new ResponseEntity<>(jobInformationService.getJobs(jobInformationPage, jobInformationSearchCriteria),
-                HttpStatus.OK);
-    }
+	// Get filter data result
 
+	@PostMapping(value = BeUrlConstant.JOB)
+	public ResponseEntity<List<BeJobInformation>> getJobs(@RequestParam ("pageSize") Integer pageSize, @RequestParam("pageNumber") Integer pageNumber) {
+		List<BeJobInformation> result = jobInformationService.findAll(pageSize,pageNumber);
+		return new ResponseEntity<>(result, HttpStatus.OK);
+	}
+	 
 }

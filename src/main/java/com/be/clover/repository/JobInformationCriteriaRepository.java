@@ -34,21 +34,13 @@ public class JobInformationCriteriaRepository {
 		this.criteriaBuilder = entityManager.getCriteriaBuilder();
 	}
 	
-	public Page<BeJobInformation> findAllWithFilters(JobInformationPage jobInformationPage, 
-			JobInformationSearchCriteria jobInfoSearchCriteria){
+	public List<BeJobInformation> findAllWithFilters(JobInformationPage jobInformationPage){
 		CriteriaQuery<BeJobInformation> criteriaQuery = criteriaBuilder.createQuery(BeJobInformation.class);
-		Root<BeJobInformation> jobInformationRoot = criteriaQuery.from(BeJobInformation.class);
-		Predicate predicate = getPredicate(jobInfoSearchCriteria,jobInformationRoot);
-		criteriaQuery.where(predicate);
-		setOrder(jobInformationPage,criteriaQuery,jobInformationRoot);
-		
 		TypedQuery<BeJobInformation> typedQuery = entityManager.createQuery(criteriaQuery);
 		typedQuery.setFirstResult(jobInformationPage.getPageNumber() * jobInformationPage.getPageSize());
 		typedQuery.setMaxResults(jobInformationPage.getPageSize());
 		
-		Pageable pageable = getPageable(jobInformationPage);
-		long jobCount = getJobCount(predicate);
-		return new PageImpl<>(typedQuery.getResultList(),pageable,jobCount);
+		return typedQuery.getResultList();
 	}
 
 	private Predicate getPredicate(JobInformationSearchCriteria jobInfoSearchCriteria,
