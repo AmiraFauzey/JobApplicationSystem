@@ -41,7 +41,7 @@ public class JobInformationService {
 			throw new ResourceNotFoundException("Not found job with id = " + jobInformation.getJobId());
 		}
 	}
-
+ 
 	public Integer deleteJob(Integer jobId) {
 		if (findByJobId(jobId).equals(null)) {
 			throw new ResourceNotFoundException("Not found job with id = " + jobId);
