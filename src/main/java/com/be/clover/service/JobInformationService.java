@@ -17,6 +17,7 @@ import com.be.clover.exceptionHandler.ResourceNotFoundException;
 import com.be.clover.model.BeJobInformation;
 import com.be.clover.model.JobInformationPage;
 import com.be.clover.repository.JobInformationCriteriaRepository;
+import com.be.clover.repository.JobInformationQueryFactory;
 import com.be.clover.repository.JobInformationRepository;
 
 @Service
@@ -26,6 +27,9 @@ public class JobInformationService {
 	
 	@Autowired
 	JobInformationRepository jobInformationDao;
+	
+	@Autowired
+	JobInformationQueryFactory jobInfoQf;
 
 	public BeJobInformation findByJobId(Integer jobId) {
 		BeJobInformation result =  jobInformationDao.findByJobId(jobId);
@@ -71,6 +75,11 @@ public class JobInformationService {
 		Page<BeJobInformation> allProducts = jobInformationDao.findAll(firstPageWithTwoElements);
 		LOGGER.error("{}", allProducts.toList());
 		return allProducts.toList();
+	}
+	
+	public List<BeJobInformation> searchByPagination(BeJobInformation jobInformation){
+		List<BeJobInformation> result = jobInfoQf.searchJobInformation(jobInformation);
+		return result;
 	}
 	 
 }
